@@ -9,8 +9,8 @@ require 'csv'
 
 connection = Fog::Storage.new({
 :provider                 => 'AWS',
-:aws_access_key_id        => 'youraccesskey',
-:aws_secret_access_key    => 'yoursecretaccesskey'
+:aws_access_key_id        => 'AKIAINE2EYT5MMJRPFRQ',
+:aws_secret_access_key    => '2iLkQcz5K9iVpIvU0ptPGVTDseLF/bcSqZJpolNk'
 })
 
 if ENV['DATABASE_URL']
@@ -41,17 +41,46 @@ namespace '/api/v1' do
 
 	#returns JSON representing the currently logged in user
 	get "/my_account" do
-		placeholder
+		api_authenticate!
+		return current_user.to_json
 	end
 
 	#let people update their bio
 	patch "/my_account" do
-		placeholder
+		api_authenticate!
+		if (params["bio"])
+			new_bio = params["bio"]
+			current_user.bio = new_bio if current_user
+			current_user.save
+		end
 	end
 
-	#let people update their profile image
+	#let people update their profile i
 	patch "/my_account/profile_image" do
-		placeholder
+		api_authenticate!
+		if params[:image] && params[:image][:tempfile] && params[:image][:filename]
+			begin
+				file       = params[:image][:tempfile]
+				filename   = params[:image][:filename]
+				directory = connection.directories.create(
+					:key    => "fog-demo-#{Time.now.to_i}", # globally unique name
+					:public => true
+				)
+				file2 = directory.files.create(
+					:key    => filename,
+					:body   => file,
+					:public => true
+				)
+				url = file2.public_url
+				current_user.profile_image_url = url
+				current_user.save
+				
+				halt 200, {message: "Uploaded Image to #{url}"}.to_json
+			rescue
+				halt 422, {message: "Unable to Upload Image"}.to_json
+			end
+		end
+
 	end
 
 	#returns JSON representing all the posts by the current user
@@ -65,7 +94,11 @@ namespace '/api/v1' do
 	#returns JSON representing the user with the given id
 	#returns 404 if user not found
 	get "/users/:id" do
-		placeholder
+		api_authenticate!
+		user = User.get(params["id"])
+		return user.to_json if user
+
+		halt 404, {"message": "User not found."}.to_json
 	end
 
 	#returns JSON representing all the posts by the user with the given id

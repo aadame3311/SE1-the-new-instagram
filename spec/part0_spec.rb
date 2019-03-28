@@ -37,7 +37,7 @@ end
 
 def is_valid_token?(encoded_token)
 	begin
-	JWT.decode encoded_token, "lasjdflajsdlfkjasldkfjalksdjflk", true, { algorithm: 'HS256' }
+	JWT.decode encoded_token, "AKIAINE2EYT5MMJRPFRQ", true, { algorithm: 'HS256' }
 	return true
 	rescue
 	return false
@@ -46,7 +46,7 @@ end
 
 def get_user_id_from_token(encoded_token)
 	begin
-	decoded = JWT.decode encoded_token, "lasjdflajsdlfkjasldkfjalksdjflk", true, { algorithm: 'HS256' }
+	decoded = JWT.decode encoded_token, "AKIAINE2EYT5MMJRPFRQ", true, { algorithm: 'HS256' }
 	return decoded[0]["user_id"]
 	rescue
 	return nil

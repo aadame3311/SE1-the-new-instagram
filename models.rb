@@ -33,7 +33,7 @@ class User
     end
 
     def as_json(*)
-       super.except(:role_id)
+       super.except(:role_id, :password)
     end
 end
 
@@ -41,18 +41,29 @@ class Post
     include DataMapper::Resource
     property :id, Serial
     #fill in the rest
+    property :caption, Text
+    property :image_url, Text
+    property :created_at, DateTime
+    property :user_id, Integer
 end
 
 class Like
     include DataMapper::Resource
     property :id, Serial
     #fill in the rest
+    property :user_id, Integer
+    property :post_id, Integer
+    property :created_at, DateTime
 end
 
 class Comment
     include DataMapper::Resource
     property :id, Serial
     #fill in the rest
+    property :user_id, Integer
+    property :post_id, Integer
+    property :text, Text
+    property :created_at, DateTime
 end
 
 # Perform basic sanity checks and initialize all relationships
