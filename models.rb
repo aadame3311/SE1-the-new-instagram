@@ -35,6 +35,10 @@ class User
     def as_json(*)
        super.except(:role_id, :password)
     end
+
+    def posts
+        return Post.all(:user_id=>self.id)
+    end
 end
 
 class Post
@@ -45,6 +49,13 @@ class Post
     property :image_url, Text
     property :created_at, DateTime
     property :user_id, Integer
+
+    def likes
+        return Like.all(:post_id=>self.id)
+    end
+    def comments
+        return Comment.all(:post_id=>self.id)
+    end
 end
 
 class Like

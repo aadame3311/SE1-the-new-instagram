@@ -1,7 +1,8 @@
 require 'jwt'
 require "json"
+require "./token"
 
-SECRET_KEY = "AKIAJG6IQE6E3DVLAI7Q"
+SECRET_KEY = Keys::TOKENS['access']
 
 def api_authenticate!
 	@api = true
